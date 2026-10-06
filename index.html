@@ -1,279 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kid Clicker</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-            display: flex;
-            height: 100vh;
-            color: #333;
-            overflow: hidden;
-        }
-
-        .clicker-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-right: 4px solid #fff;
-            background: rgba(255, 255, 255, 0.2);
-            position: relative;
-        }
-
-        .counter-box {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 3rem;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .kps-text {
-            font-size: 1.2rem;
-            color: #555;
-            margin-top: 5px;
-        }
-
-        .kid-btn {
-            font-size: 8rem;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.05s ease;
-            filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.15));
-        }
-
-        .kid-btn:active {
-            transform: scale(0.9);
-        }
-
-        .shop-section {
-            width: 350px;
-            background: white;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .shop-header {
-            background: #ff7675;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .shop-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-        }
-
-        .upgrade-card {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .upgrade-card:hover {
-            border-color: #ff7675;
-            background: #fff5f5;
-            transform: translateY(-2px);
-        }
-
-        .upgrade-card.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #e9ecef;
-            border-color: #dee2e6;
-            transform: none;
-        }
-
-        .upgrade-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 1.1rem;
-        }
-
-        .upgrade-info p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .upgrade-cost {
-            font-weight: bold;
-            color: #2ed573;
-            font-size: 1.1rem;
-        }
-
-        .upgrade-count {
-            background: #ff7675;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-left: 10px;
-        }
-
-        .floating-text {
-            position: absolute;
-            color: #ff7675;
-            font-weight: bold;
-            font-size: 1.5rem;
-            pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-            text-shadow: 1px 1px 2px white;
-        }
-
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-100px); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kid Clicker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#a1c4fd;--bg2:#c2e9fb;--panel:#fff;--text:#333;--sub:#666;--card:#f8f9fa;--border:#e9ecef;--accent:#ff7675;--green:#1e9e57;--glass:rgba(255,255,255,.25);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#1b2a49;--bg2:#243b5e;--panel:#1e2433;--text:#eee;--sub:#aab;--card:#272e40;--border:#3a4259;--green:#4cd98a;--glass:rgba(0,0,0,.2)}}
+:root[data-theme="dark"]{--bg1:#1b2a49;--bg2:#243b5e;--panel:#1e2433;--text:#eee;--sub:#aab;--card:#272e40;--border:#3a4259;--green:#4cd98a;--glass:rgba(0,0,0,.2)}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;display:flex;font-family:'Segoe UI',Tahoma,Verdana,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:var(--text);overflow:hidden}
+#clickZone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--glass);position:relative;min-width:0}
+h1{font-size:clamp(1.6rem,5vw,3rem);margin:0;text-align:center}
+.name{font-size:1.1rem;color:var(--sub);margin-bottom:10px;text-align:center}
+.name button{margin-left:8px;font-size:.75rem;cursor:pointer;border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:6px;padding:2px 8px}
+.kps{color:var(--sub);margin:5px 0 15px;text-align:center}
+#kidBtn{font-size:clamp(4rem,14vw,8rem);cursor:pointer;user-select:none;transition:transform .05s;filter:drop-shadow(0 10px 10px rgba(0,0,0,.15))}
+#kidBtn:active{transform:scale(.9)}
+#shop{width:360px;background:var(--panel);box-shadow:-5px 0 15px rgba(0,0,0,.1);display:flex;flex-direction:column;min-height:0}
+#shop h2{background:var(--accent);color:#fff;text-align:center;padding:12px;margin:0;font-size:1.5rem}
+#items{flex:1;overflow-y:auto;padding:12px}
+.sec{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);margin:6px 0 8px}
+.card{background:var(--card);border:2px solid var(--border);border-radius:8px;padding:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card.off{opacity:.5;cursor:not-allowed;transform:none}
+.card h3{margin:0 0 3px;font-size:1rem}
+.card p{margin:0;font-size:.8rem;color:var(--sub)}
+.cost{font-weight:bold;color:var(--green);white-space:nowrap}
+.cnt{background:var(--accent);color:#fff;padding:1px 8px;border-radius:20px;font-size:.75rem;margin-left:6px}
+.float{position:absolute;color:var(--accent);font-weight:bold;font-size:1.4rem;pointer-events:none;animation:up .8s ease-out forwards;text-shadow:1px 1px 2px #fff}
+@keyframes up{to{opacity:0;transform:translateY(-100px)}}
+#bus{position:absolute;font-size:3.5rem;cursor:pointer;animation:bob 1s ease-in-out infinite;z-index:5}
+@keyframes bob{50%{transform:translateY(-8px)}}
+#dev{position:fixed;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:20;background:#222;color:#fff;border:2px solid gold;border-radius:10px;padding:10px;width:220px;font-size:.85rem;display:none}
+#dev b{color:gold}
+#dev input{width:100%;box-sizing:border-box;padding:5px;margin:6px 0;border-radius:5px;border:0}
+#dev button{width:100%;margin-top:5px;padding:6px;border:0;border-radius:5px;cursor:pointer;background:gold;font-weight:bold}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:50}
+#modal div{background:var(--panel);padding:24px;border-radius:12px;text-align:center;width:min(90%,340px)}
+#modal input{width:100%;box-sizing:border-box;padding:10px;font-size:1.1rem;margin:12px 0;border-radius:8px;border:2px solid var(--border);background:var(--card);color:var(--text)}
+#modal button{padding:10px 24px;font-size:1rem;border:0;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer}
+#toast{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#222;color:gold;padding:8px 16px;border-radius:20px;z-index:60;display:none;font-size:.9rem;text-align:center;max-width:90%}
+.tools{display:flex;gap:6px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.tools button{cursor:pointer;border:1px solid var(--border);background:var(--panel);color:var(--text);border-radius:8px;padding:6px 12px}
+#grad{background:linear-gradient(90deg,#f6d365,#fda085);border:0;font-weight:bold;color:#333}
+#grad:disabled{opacity:.5;cursor:not-allowed}
+.ach{font-size:.8rem;color:var(--sub);padding:3px 0}.ach.got{color:var(--text);font-weight:600}
+@media (max-width:700px){body{flex-direction:column}#shop{width:100%;height:50%;box-shadow:0 -5px 15px rgba(0,0,0,.1)}#clickZone{flex:1}}
+/* ===== visual theme layer ===== */
+:root{--sky1:#7cc8fb;--sky2:#d9f2ff;--grass1:#7ed957;--grass2:#4cbf56;--ink:#2b3a55;--shopbg:#fff8ec;--cardbg:#fff;--cardbd:#ffd9a8;--ok:#2fbf71;--hdr1:#ff8a65;--hdr2:#ff6f91}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky1:#141c42;--sky2:#34457f;--grass1:#2f6b45;--grass2:#245536;--ink:#f1f3ff;--shopbg:#232a3f;--cardbg:#2d3550;--cardbd:#47507a;--ok:#4fd88f}}
+:root[data-theme="dark"]{--sky1:#141c42;--sky2:#34457f;--grass1:#2f6b45;--grass2:#245536;--ink:#f1f3ff;--shopbg:#232a3f;--cardbg:#2d3550;--cardbd:#47507a;--ok:#4fd88f}
+html,body,button,input{font-family:'Fredoka','Segoe UI',system-ui,sans-serif}
+body{background:linear-gradient(180deg,var(--sky1),var(--sky2));color:var(--ink)}
+#clickZone{isolation:isolate;overflow:hidden;background:linear-gradient(to top,var(--grass2) 0,var(--grass1) 14px,var(--grass1) 64px,transparent 65px)}
+#clickZone::before,#clickZone::after{content:'☁️';position:absolute;z-index:-1;font-size:5rem;opacity:.85;pointer-events:none;left:-15%;animation:drift 60s linear infinite}
+#clickZone::before{top:6%}
+#clickZone::after{top:26%;font-size:3.4rem;opacity:.6;animation-duration:90s;animation-delay:-45s}
+@keyframes drift{to{left:110%}}
+h1{color:#fff;font-weight:700;text-shadow:0 4px 0 rgba(0,0,0,.18),0 0 20px rgba(255,255,255,.55)}
+.name{background:rgba(255,255,255,.85);color:#2b3a55;padding:6px 16px;border-radius:999px;box-shadow:0 4px 0 rgba(0,0,0,.12);font-weight:600}
+.kps{background:rgba(0,0,0,.2);color:#fff;padding:4px 14px;border-radius:999px;font-weight:600}
+#kidBtn{display:grid;place-items:center;width:clamp(150px,30vw,230px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff7d6,#ffd36b 60%,#ffb347);border:6px solid #fff;box-shadow:0 10px 0 rgba(0,0,0,.15),0 0 0 10px rgba(255,255,255,.35);font-size:clamp(4rem,14vw,7rem);filter:none;animation:idle 3s ease-in-out infinite}
+@keyframes idle{50%{translate:0 -8px}}
+#kidBtn:hover{scale:1.04}
+.tools button{border:0;background:#fff;color:#2b3a55;box-shadow:0 4px 0 rgba(0,0,0,.15);border-radius:12px;font-weight:600;padding:8px 14px}
+.tools button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.15)}
+#shop{background:var(--shopbg);border-left:6px solid #fff}
+#shop h2{background:linear-gradient(135deg,var(--hdr1),var(--hdr2));font-weight:700;text-shadow:0 2px 0 rgba(0,0,0,.2);box-shadow:0 4px 0 rgba(0,0,0,.1);position:relative;z-index:1}
+#shop h2::before{content:'🧸 '}
+#items::-webkit-scrollbar{width:10px}
+#items::-webkit-scrollbar-thumb{background:var(--cardbd);border-radius:10px}
+.sec{color:var(--hdr2);font-weight:700;display:flex;align-items:center;gap:8px;margin:10px 0}
+.sec::after{content:'';flex:1;height:3px;border-radius:3px;background:var(--cardbd)}
+.card{background:var(--cardbg);color:var(--ink);border:3px solid var(--cardbd);border-radius:16px;box-shadow:0 4px 0 var(--cardbd)}
+.card:not(.off){border-color:var(--ok);box-shadow:0 4px 0 var(--ok)}
+.card:hover{border-color:var(--hdr1)}
+.card:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cardbd)}
+.card.off{filter:grayscale(.5);opacity:.6}
+.card h3{font-weight:600}
+.card p{color:var(--ink);opacity:.7}
+.cnt{background:var(--hdr2)}
+.cost{background:var(--ok);color:#fff;padding:4px 12px;border-radius:999px;font-weight:700}
+.cost::before{content:'👦 ';font-size:.8em}
+.card.off .cost{background:#9aa3b5}
+.ach{background:rgba(255,190,110,.18);border-radius:10px;padding:6px 10px;margin-bottom:5px;color:var(--ink);opacity:.75}
+.ach.got{background:rgba(47,191,113,.2);opacity:1}
+.float{color:#fff;text-shadow:-1px -1px 0 var(--hdr2),1px -1px 0 var(--hdr2),-1px 1px 0 var(--hdr2),1px 1px 0 var(--hdr2)}
+#bus{filter:drop-shadow(0 6px 4px rgba(0,0,0,.25))}
+#toast{background:linear-gradient(135deg,#ffd54f,#ffb300);color:#4a3200;font-weight:700;box-shadow:0 5px 0 rgba(0,0,0,.2)}
+#modal div{background:var(--shopbg);color:var(--ink);border:6px solid #ffd36b;border-radius:24px}
+#modal button{box-shadow:0 4px 0 rgba(0,0,0,.2);font-weight:600}
+#dev{border-radius:16px;box-shadow:0 8px 0 rgba(0,0,0,.3)}
+@media (max-width:700px){#shop{border-left:0;border-top:6px solid #fff}}
+/* ===== settings, backgrounds, confetti ===== */
+#setm{position:fixed;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;z-index:55}
+#setm>div{background:var(--shopbg);color:var(--ink);border:6px solid #ffd36b;border-radius:24px;padding:20px;width:min(92%,400px);max-height:85%;overflow-y:auto;box-sizing:border-box}
+#setm h2{margin:0 0 6px;text-align:center}
+#themeRow{display:flex;gap:6px;margin-bottom:8px}
+#themeRow button,#setClose{flex:1;padding:8px;border:0;border-radius:12px;background:var(--cardbg);color:var(--ink);font-weight:600;cursor:pointer;box-shadow:0 4px 0 var(--cardbd)}
+#themeRow .sel{background:var(--ok);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+#setClose{width:100%;margin-top:6px;background:var(--hdr2);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.cost.own::before{content:''}
+.cost.own{background:var(--hdr1)}
+.conf{position:fixed;top:-30px;z-index:70;pointer-events:none;animation:fall 1.8s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.8}}
+#clickZone[data-bg=beach]{background:linear-gradient(to top,#f3d58a 0,#f3d58a 60px,#29a8e8 60px,#4fc3f7 110px,transparent 111px),linear-gradient(180deg,#8fdcff,#e9faff)}
+#clickZone[data-bg=beach]::before{content:'☀️'}#clickZone[data-bg=beach]::after{content:'🕊️'}
+#clickZone[data-bg=candy]{background:linear-gradient(to top,#ff8fc4 0,#ffb6d9 60px,transparent 61px),linear-gradient(180deg,#c9a7ff,#ffd6f0)}
+#clickZone[data-bg=candy]::before{content:'🍭'}#clickZone[data-bg=candy]::after{content:'🍬'}
+#clickZone[data-bg=space]{background:linear-gradient(to top,#5a5f73 0,#7b8199 50px,transparent 51px),radial-gradient(2px 2px at 20% 25%,#fff,transparent),radial-gradient(2px 2px at 75% 15%,#fff,transparent),radial-gradient(1.5px 1.5px at 55% 55%,#fff,transparent),radial-gradient(2px 2px at 30% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 88% 45%,#fff,transparent),linear-gradient(180deg,#0b1030,#2a1b5e)}
+#clickZone[data-bg=space]::before{content:'🚀'}#clickZone[data-bg=space]::after{content:'🛸'}
+#clickZone[data-bg=ocean]{background:linear-gradient(to top,#e8c98b 0,#e8c98b 40px,transparent 41px),linear-gradient(180deg,#4dd0e1,#0277bd)}
+#clickZone[data-bg=ocean]::before{content:'🐠'}#clickZone[data-bg=ocean]::after{content:'🐙'}
+#clickZone[data-bg=rainbow]{background:linear-gradient(to top,#b5ffb0 0,#b5ffb0 40px,transparent 41px),linear-gradient(180deg,#ff9a9e,#fecfef 35%,#a1c4fd 70%,#c2ffd8)}
+#clickZone[data-bg=rainbow]::before{content:'🌈'}#clickZone[data-bg=rainbow]::after{content:'🦄'}
+/* ===== polish pass 2 ===== */
+#c-hands h3::before{content:'✊ '}#c-crayon h3::before{content:'🖍️ '}#c-teacher h3::before{content:'🍎 '}
+#c-daycare h3::before{content:'🍼 '}#c-playground h3::before{content:'🛝 '}#c-school h3::before{content:'🏫 '}
+#c-camp h3::before{content:'⛺ '}#c-park h3::before{content:'🎡 '}#c-town h3::before{content:'🏘️ '}
+#c-city h3::before{content:'🏙️ '}#c-space h3::before{content:'🚀 '}#c-portal h3::before{content:'🌀 '}
+#kidBtn{animation:idle 3s ease-in-out infinite,glow 2.5s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 10px 0 rgba(0,0,0,.15),0 0 0 14px rgba(255,255,255,.5),0 0 40px rgba(255,220,120,.8)}}
+#shop h2{background:linear-gradient(90deg,var(--hdr1),var(--hdr2),var(--hdr1));background-size:200% 100%;animation:shimmer 6s linear infinite}
+@keyframes shimmer{to{background-position:200% 0}}
+.card:not(.off){animation:ready 2.2s ease-in-out infinite}
+@keyframes ready{50%{box-shadow:0 4px 0 var(--ok),0 0 14px var(--ok)}}
+#setm{backdrop-filter:blur(4px);z-index:80}
+#setm>div{animation:pop .25s ease-out;box-shadow:0 12px 0 rgba(0,0,0,.2)}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+#setm h2{background:linear-gradient(135deg,var(--hdr1),var(--hdr2));color:#fff;margin:-20px -20px 12px;padding:14px;border-radius:16px 16px 0 0;text-shadow:0 2px 0 rgba(0,0,0,.2)}
+#toast{z-index:90}
+.conf{z-index:95}
+#setm{z-index:1000}#toast{z-index:1010}.conf{z-index:1020}
+#dev b{cursor:pointer;display:block}
+@media (max-width:700px){#dev{width:150px;font-size:.75rem;padding:6px;left:6px;bottom:calc(6px + env(safe-area-inset-bottom,0px))}#dev input{margin:3px 0;padding:3px}#dev button{margin-top:3px;padding:4px}}
+/* ===== detailed backgrounds ===== */
+#scene{position:absolute;left:0;right:0;bottom:30px;display:flex;justify-content:space-around;align-items:flex-end;font-size:clamp(1.6rem,4vw,2.6rem);pointer-events:none;z-index:-1;white-space:nowrap}
+#scene i{font-style:normal;animation:sway 4s ease-in-out infinite;transform-origin:bottom}
+#scene i:nth-child(2n){animation-delay:-1.5s}#scene i:nth-child(3n){animation-delay:-2.7s}
+@keyframes sway{50%{transform:rotate(4deg)}}
+#clickZone[data-bg=meadow]{background:linear-gradient(to top,var(--grass2) 0,var(--grass2) 56px,transparent 57px),radial-gradient(ellipse 70% 110px at 20% 100%,var(--grass1) 98%,transparent 100%),radial-gradient(ellipse 60% 150px at 85% 100%,color-mix(in srgb,var(--grass1),#fff 15%) 98%,transparent 100%),radial-gradient(circle at 88% 12%,#fff6b0 0 26px,rgba(255,240,150,.5) 27px,transparent 110px),linear-gradient(180deg,var(--sky1),var(--sky2))}
+#clickZone[data-bg=beach]{background:linear-gradient(to top,#f3d58a 0,#f3d58a 56px,transparent 57px),linear-gradient(to top,transparent 56px,#1e9ad6 57px,#37b6f0 85px,#5fd0f7 118px,transparent 119px),radial-gradient(ellipse 16% 30px at 78% calc(100% - 118px),#5b9a6a 98%,transparent 100%),radial-gradient(circle at 14% 14%,#fff3b0 0 28px,rgba(255,230,120,.5) 29px,transparent 110px),linear-gradient(180deg,#7fd3ff,#e9faff 75%)}
+#clickZone[data-bg=candy]{background:repeating-linear-gradient(90deg,#ff7fba 0 24px,#ffb6d9 24px 48px) left bottom/100% 56px no-repeat,radial-gradient(ellipse 60% 120px at 15% 100%,#ffd0e8 98%,transparent 100%),radial-gradient(ellipse 55% 150px at 88% 100%,#c8f5e4 98%,transparent 100%),radial-gradient(3px 3px at 25% 20%,#fff,transparent),radial-gradient(3px 3px at 70% 35%,#fff,transparent),radial-gradient(3px 3px at 45% 12%,#fff,transparent),linear-gradient(180deg,#b79bff,#ffc8ec)}
+#clickZone[data-bg=space]{background:linear-gradient(to top,#4b5066 0,#7b8199 50px,transparent 51px),radial-gradient(ellipse 50% 90px at 30% 100%,#8a90a8 98%,transparent 100%),radial-gradient(circle 60px at 82% 22%,#ff9966 0 62%,#d9643a 63% 90%,transparent 100%),radial-gradient(ellipse 40% 30% at 22% 35%,rgba(180,90,255,.35),transparent),radial-gradient(2px 2px at 20% 25%,#fff,transparent),radial-gradient(2px 2px at 75% 12%,#fff,transparent),radial-gradient(1.5px 1.5px at 55% 55%,#fff,transparent),radial-gradient(2px 2px at 35% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 92% 50%,#fff,transparent),linear-gradient(180deg,#0b1030,#2a1b5e)}
+#clickZone[data-bg=ocean]{background:linear-gradient(to top,#e8c98b 0,#e8c98b 40px,transparent 41px),radial-gradient(ellipse 45% 70px at 20% 100%,#f1d9a0 98%,transparent 100%),radial-gradient(ellipse 40% 90px at 85% 100%,#dcb877 98%,transparent 100%),repeating-linear-gradient(100deg,rgba(255,255,255,.1) 0 40px,transparent 40px 95px),linear-gradient(180deg,#4dd0e1,#0277bd)}
+#clickZone[data-bg=rainbow]{background:linear-gradient(to top,#b5ffb0 0,#b5ffb0 40px,transparent 41px),radial-gradient(ellipse 60% 110px at 20% 100%,#d3ffcf 98%,transparent 100%),radial-gradient(circle at 50% 118%,transparent 0 52%,#ff6b6b 52% 56%,#ffd93d 56% 60%,#6bcb77 60% 64%,#4d96ff 64% 68%,#b983ff 68% 72%,transparent 72%),linear-gradient(180deg,#ff9a9e,#fecfef 35%,#a1c4fd 70%,#c2ffd8)}
+/* ===== wooden fence barrier around the shop ===== */
+#shop{box-sizing:border-box;border:8px solid #a8672b;border-radius:18px;margin:10px 10px 10px 0;height:calc(100% - 20px);box-shadow:inset 0 0 0 4px #e0a96d,0 6px 0 rgba(0,0,0,.18);overflow:hidden}
+#shop::before,#shop::after{content:'';display:block;flex:none;height:22px;background:linear-gradient(#a8672b,#a8672b) 0 13px/100% 4px no-repeat,repeating-linear-gradient(90deg,#e8b87a 0 12px,#c98d4f 12px 14px,transparent 14px 18px)}
+@media (max-width:700px){#shop{width:auto;margin:0 8px 8px;height:50%;border-left:8px solid #a8672b;border-top:8px solid #a8672b}}
+#dev b{cursor:grab;touch-action:none;user-select:none;font-size:1.3rem;text-align:center;line-height:1}
+#dev b:active{cursor:grabbing}
+#dev.min{width:auto!important;padding:6px 12px}
+</style>
 </head>
 <body>
+<div id="clickZone">
+  <div id="scene"></div>
+  <div class="name"><span id="nameTxt"></span><button id="renameBtn">Rename</button></div>
+  <h1 id="kids">0 Kids</h1>
+  <div class="kps" id="kps"></div>
+  <div id="kidBtn">👦</div>
+  <div class="tools"><button id="grad">🎓 Graduate</button><button id="sndBtn">🔊</button><button id="musBtn">🎵 On</button><button id="setBtn">⚙️ Settings</button></div>
 
-    <div class="clicker-section" id="clickZone">
-        <div class="counter-box">
-            <h1 id="kidCount">0 Kids</h1>
-            <div class="kps-text" id="kpsCount">per second: 0</div>
-        </div>
-        <div class="kid-btn" id="kidButton">👦</div>
-    </div>
+</div>
+<div id="shop"><h2>The Nursery Shop</h2><div id="items"></div></div>
 
-    <div class="shop-section">
-        <h2 class="shop-header">The Nursery Shop</h2>
-        <div class="shop-items">
-            
-            <div class="upgrade-card" id="upgrade-daycare">
-                <div class="upgrade-info">
-                    <h3>Baby Daycare <span class="upgrade-count" id="count-daycare">0</span></h3>
-                    <p>Generates +0.5 Kids per second</p>
-                </div>
-                <div class="upgrade-cost" id="cost-daycare">15</div>
-            </div>
+<div id="toast"></div>
+<div id="setm" style="display:none"><div>
+  <h2>⚙️ Settings</h2>
+  <div class="sec">Theme</div><div id="themeRow"></div>
+  <div class="sec">Characters</div><div id="chList"></div>
+  <div class="sec">Backgrounds</div><div id="bgList"></div>
+  <button id="setClose">Done</button>
+</div></div>
 
-            <div class="upgrade-card" id="upgrade-playground">
-                <div class="upgrade-info">
-                    <h3>Playground <span class="upgrade-count" id="count-playground">0</span></h3>
-                    <p>Generates +4 Kids per second</p>
-                </div>
-                <div class="upgrade-cost" id="cost-playground">100</div>
-            </div>
+<div id="dev">
+  <b>🤫</b>
+  <input id="devAmt" type="number" placeholder="Set kids to...">
+  <button id="devSet">Set kids</button>
+  <button id="devBuy">Buy everything +100</button>
+  <button id="devX2">Kids ×2</button>
+  <button id="devMult">2× production: OFF</button>
+</div>
 
-            <div class="upgrade-card" id="upgrade-school">
-                <div class="upgrade-info">
-                    <h3>Elementary School <span class="upgrade-count" id="count-school">0</span></h3>
-                    <p>Generates +32 Kids per second</p>
-                </div>
-                <div class="upgrade-cost" id="cost-school">1,100</div>
-            </div>
+<div id="modal"><div>
+  <h2>🏫 Name your kindergarten</h2>
+  <input id="nameIn" maxlength="24" placeholder="Sunshine Kindergarten">
+  <button id="nameOk">Open the doors</button>
+</div></div>
 
-        </div>
-    </div>
+<script>
+// ---------- data ----------
+const BUILD=[
+ {id:'daycare',n:'Baby Daycare',kps:.5,base:15},
+ {id:'playground',n:'Playground',kps:4,base:100},
+ {id:'school',n:'Elementary School',kps:32,base:1100},
+ {id:'camp',n:'Summer Camp',kps:200,base:12000},
+ {id:'park',n:'Theme Park',kps:1400,base:130000},
+ {id:'town',n:'Kid Town',kps:8000,base:1.4e6},
+ {id:'city',n:'Kid City',kps:47000,base:2e7},
+ {id:'space',n:'Space Academy',kps:260000,base:3.3e8},
+ {id:'portal',n:'Portal to Kid Dimension',kps:1.6e6,base:5.1e9}
+];
+const UPG=[
+ {id:'hands',n:'Stronger Hands',d:'+1 Kid per click',base:50,g:1.5},
+ {id:'crayon',n:'Golden Crayons',d:'Clicks gain +1% of your Kids/sec',base:2000,g:2.2},
+ {id:'teacher',n:'Teacher Training',d:'+10% to all Kids/sec',base:800,g:2.5}
+];
+const S={name:'',kids:0,b:{},u:{},dip:0,total:0,bus:0,ach:{},snd:true,last:0,bgs:{meadow:1},bg:'meadow',theme:'auto',chars:{mix:1},ch:'mix',music:true};
+BUILD.forEach(x=>S.b[x.id]=0);UPG.forEach(x=>S.u[x.id]=0);
+const cost=(base,g,c)=>Math.floor(base*Math.pow(g,c));
+const bCost=x=>cost(x.base,1.15,S.b[x.id]);
+const uCost=x=>cost(x.base,x.g,S.u[x.id]);
 
-    <script>
-        let kids = 0;
-        let kidsPerSecond = 0;
+const SUF=['','K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc'];
+function fmt(n){
+  n=Math.floor(n);
+  if(n<1000)return String(n);
+  const i=Math.floor(Math.log10(n)/3);
+  if(i>=SUF.length)return n.toExponential(2).replace('e+','e');
+  return (n/Math.pow(1000,i)).toFixed(2).replace(/\.?0+$/,'')+SUF[i];
+}
+const ACH=[1e2,1e4,1e6,1e8,1e10,1e12].map(v=>({id:'t'+v,n:fmt(v)+' Club',d:'Earn '+fmt(v)+' kids in one run',ok:()=>S.total>=v}))
+ .concat(BUILD.map(x=>({id:'b'+x.id,n:x.n+' Pro',d:'Own 10 '+x.n,ok:()=>S.b[x.id]>=10})))
+ .concat([{id:'grad',n:'Graduate!',d:'Graduate for the first time',ok:()=>S.dip>=1},{id:'bus',n:'All Aboard',d:'Catch a Field Trip bus',ok:()=>S.bus>=1}]);
+let devMult=1;
+const kpsNow=()=>BUILD.reduce((a,x)=>a+S.b[x.id]*x.kps,0)*(1+.1*S.u.teacher)*(1+.02*S.dip)*(1+.01*Object.keys(S.ach).length)*devMult;
+const clickPow=()=>(1+S.u.hands)*devMult+S.u.crayon*.01*kpsNow();
 
-        const upgrades = {
-            daycare: { count: 0, baseCost: 15, currentCost: 15, kps: 0.5 },
-            playground: { count: 0, baseCost: 100, currentCost: 100, kps: 4 },
-            school: { count: 0, baseCost: 1100, currentCost: 1100, kps: 32 }
-        };
+// ---------- shop ----------
+const $=id=>document.getElementById(id);
+const items=$('items');
+function card(id,title,desc){
+  const el=document.createElement('div');el.className='card';el.id='c-'+id;
+  el.innerHTML=`<div><h3>${title}<span class="cnt" id="n-${id}">0</span></h3><p>${desc}</p></div><div class="cost" id="p-${id}"></div>`;
+  return el;
+}
+function buildShop(){
+  items.innerHTML='<div class="sec">Upgrades</div>';
+  UPG.forEach(x=>{const e=card(x.id,x.n,x.d);e.onclick=()=>buy('u',x);items.appendChild(e)});
+  items.insertAdjacentHTML('beforeend','<div class="sec">Buildings</div>');
+  BUILD.forEach(x=>{const e=card(x.id,x.n,`+${x.kps<1?x.kps:fmt(x.kps)} Kids per second`);e.onclick=()=>buy('b',x);items.appendChild(e)});
+  items.insertAdjacentHTML('beforeend','<div class="sec">Achievements (+1% production each)</div>');
+  ACH.forEach(a=>{const r=document.createElement('div');r.className='ach';r.id='a-'+a.id;items.appendChild(r)});
+}
+function buy(t,x){
+  const c=t==='b'?bCost(x):uCost(x);
+  if(S.kids<c)return;
+  S.kids-=c;S[t][x.id]++;beep(700,.08);render();save();
+}
+function render(){
+  const k=Math.floor(S.kids);
+  $('kids').textContent=k===1?'1 Kid':fmt(k)+' Kids';
+  $('kps').textContent=`per second: ${kpsNow()>=1000?fmt(kpsNow()):kpsNow().toFixed(1)}  ·  per click: ${clickPow()>=1000?fmt(clickPow()):clickPow().toFixed(1)}`;
+  document.title=fmt(k)+' Kids – '+S.name;
+  ACH.forEach(a=>{
+    if(!S.ach[a.id]&&a.ok()){S.ach[a.id]=1;toast('🏆 '+a.n+' unlocked!');beep(1000,.15);confetti(14)}
+    const r=$('a-'+a.id);
+    if(r){r.classList.toggle('got',!!S.ach[a.id]);r.textContent=(S.ach[a.id]?'✅ ':'🔒 ')+a.n+' – '+a.d}
+  });
+  const g=pending();$('grad').disabled=g<1;
+  if(!gradArm)$('grad').textContent=`🎓 Graduate (+${g} 🏅, have ${S.dip})`;
+  [['b',BUILD,bCost],['u',UPG,uCost]].forEach(([t,list,f])=>list.forEach(x=>{
+    const c=f(x);
+    $('p-'+x.id).textContent=fmt(c);
+    $('n-'+x.id).textContent=S[t][x.id];
+    $('c-'+x.id).classList.toggle('off',S.kids<c);
+  }));
+}
 
-        const kidCountEl = document.getElementById('kidCount');
-        const kpsCountEl = document.getElementById('kpsCount');
-        const kidButton = document.getElementById('kidButton');
-        const clickZone = document.getElementById('clickZone');
+// ---------- clicking ----------
+$('kidBtn').addEventListener('click',e=>{
+  const p=clickPow();S.kids+=p;S.total+=p;clickSound();if(S.ch==='mix')$('kidBtn').textContent=['👦','👧','🧒','👶'][Math.random()*4|0];render();
+  const t=document.createElement('div');t.className='float';t.textContent='+'+fmt(Math.max(p,1));
+  const r=$('clickZone').getBoundingClientRect();
+  t.style.left=(e.clientX-r.left-15)+'px';t.style.top=(e.clientY-r.top-15)+'px';
+  $('clickZone').appendChild(t);setTimeout(()=>t.remove(),800);
+});
+setInterval(()=>{const k=kpsNow();if(k>0){S.kids+=k/10;S.total+=k/10;render()}},100);
 
-        kidButton.addEventListener('click', (e) => {
-            kids += 1;
-            updateDisplay();
-            createFloatingText(e.clientX, e.clientY);
-        });
+// ---------- field trip bus ----------
+function scheduleBus(){setTimeout(spawnBus,45000+Math.random()*45000)}
+function spawnBus(){
+  const z=$('clickZone'),b=document.createElement('div');b.id='bus';b.textContent='🚌';
+  b.style.left=(10+Math.random()*70)+'%';b.style.top=(10+Math.random()*70)+'%';
+  const gone=setTimeout(()=>{b.remove();scheduleBus()},10000);
+  b.onclick=()=>{
+    clearTimeout(gone);
+    const bonus=Math.max(50,kpsNow()*60);S.kids+=bonus;S.total+=bonus;S.bus++;beep(900,.2);render();
+    b.textContent='+'+fmt(bonus);b.style.fontSize='1.8rem';b.style.pointerEvents='none';
+    setTimeout(()=>{b.remove();scheduleBus()},900);
+  };
+  z.appendChild(b);
+}
 
-        Object.keys(upgrades).forEach(id => {
-            document.getElementById(`upgrade-${id}`).addEventListener('click', () => {
-                buyUpgrade(id);
-            });
-        });
+// ---------- sound, toast, graduate ----------
+let actx,gradArm=0,tt;
+function beep(f,d){
+  if(!S.snd)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type='triangle';o.frequency.value=f;g.gain.value=.04;
+    o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);
+  }catch(e){}
+}
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',3000)}
+const pending=()=>Math.floor(Math.sqrt(S.total/1e7));
+$('grad').onclick=()=>{
+  if(pending()<1)return;
+  if(!gradArm){gradArm=1;$('grad').textContent='Click again to confirm!';setTimeout(()=>{gradArm=0},3000);return}
+  S.dip+=pending();S.kids=0;S.total=0;
+  BUILD.forEach(x=>S.b[x.id]=0);UPG.forEach(x=>S.u[x.id]=0);
+  gradArm=0;toast('🎓 Graduated! Each diploma gives +2% production');beep(900,.25);confetti(40);render();save();
+};
+$('sndBtn').onclick=()=>{S.snd=!S.snd;$('sndBtn').textContent=S.snd?'🔊':'🔇'};
 
-        function buyUpgrade(id) {
-            const upgrade = upgrades[id];
-            if (kids >= upgrade.currentCost) {
-                kids -= upgrade.currentCost;
-                upgrade.count++;
-                upgrade.currentCost = Math.floor(upgrade.baseCost * Math.pow(1.15, upgrade.count));
-                calculateKPS();
-                updateDisplay();
-            }
-        }
+// ---------- character sounds + chill music ----------
+function ctx(){actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
+function tone(type,f0,f1,d,v,delay){
+  const a=ctx(),t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();
+  o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.02);
+}
+function noise(d,v,freq){
+  const a=ctx(),b=a.createBuffer(1,Math.floor(a.sampleRate*d),a.sampleRate),x=b.getChannelData(0);
+  for(let i=0;i<x.length;i++)x[i]=(Math.random()*2-1)*(1-i/x.length);
+  const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();
+  f.type='bandpass';f.frequency.value=freq;g.gain.value=v;
+  s.buffer=b;s.connect(f);f.connect(g);g.connect(a.destination);s.start();
+}
+function clickSound(){
+  if(!S.snd)return;
+  try{
+    const r=Math.random();
+    switch(S.ch){
+      case 'hero':tone('sawtooth',300,900,.14,.05);break;
+      case 'wizard':[880,1175,1568].forEach((f,i)=>tone('sine',f*(1+r*.05),f*1.02,.12,.07,i*.05));break;
+      case 'ninja':noise(.09,.3,3500+r*1500);break;
+      case 'astro':tone('sine',1300,420,.16,.08);break;
+      case 'mermaid':tone('sine',400+r*200,1000+r*300,.09,.09);tone('sine',500+r*200,1200,.09,.07,.08);break;
+      case 'unicorn':[1319,1760,2093].forEach((f,i)=>tone('sine',f,f*1.02,.14,.05,i*.04));break;
+      case 'dragon':tone('sawtooth',150+r*30,55,.28,.07);noise(.2,.1,300);break;
+      default:{const f=450+r*250;tone('triangle',f,f*1.01,.05,.05)}
+    }
+  }catch(e){}
+}
+const PROG=[[57,60,64,67],[53,57,60,64],[48,55,59,64],[55,59,62,64]];
+const PENT=[69,72,74,76,79,81];
+let mTimer=null,mStep=0,mGain=null;
+const mf=n=>440*Math.pow(2,(n-69)/12);
+function musicInit(){
+  const a=ctx();if(mGain)return;
+  mGain=a.createGain();mGain.gain.value=.5;
+  const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1100;
+  const dl=a.createDelay(1),fb=a.createGain();dl.delayTime.value=.43;fb.gain.value=.35;
+  dl.connect(fb);fb.connect(dl);
+  mGain.connect(lp);lp.connect(a.destination);lp.connect(dl);dl.connect(a.destination);
+}
+function mNote(freq,t,d,v,type){
+  const o=actx.createOscillator(),g=actx.createGain();
+  o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.08);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(mGain);o.start(t);o.stop(t+d+.05);
+}
+function musicStep(){
+  if(!S.music||!actx||actx.state!=='running')return;
+  const t=actx.currentTime+.05,beat=.86,chord=PROG[Math.floor(mStep/4)%PROG.length];
+  if(mStep%4===0){chord.forEach(n=>mNote(mf(n),t,beat*4,.035,'triangle'));mNote(mf(chord[0]-12),t,beat*3.5,.06,'sine')}
+  if(Math.random()<.55)mNote(mf(PENT[Math.random()*PENT.length|0]),t+(Math.random()<.3?beat/2:0),beat*1.6,.04,'sine');
+  mStep++;
+}
+function musicOn(){musicInit();if(mTimer)return;mTimer=setInterval(musicStep,860);musicStep()}
+function musicOff(){clearInterval(mTimer);mTimer=null}
+const musLabel=()=>{$('musBtn').textContent=S.music?'🎵 On':'🎵 Off'};
+$('musBtn').onclick=()=>{S.music=!S.music;musLabel();S.music?musicOn():musicOff();save()};
+document.addEventListener('pointerdown',()=>{if(S.music)musicOn()},{once:true});
+document.addEventListener('visibilitychange',()=>{if(actx)document.hidden?actx.suspend():actx.resume()});
 
-        function calculateKPS() {
-            kidsPerSecond = 0;
-            Object.keys(upgrades).forEach(id => {
-                kidsPerSecond += upgrades[id].count * upgrades[id].kps;
-            });
-        }
+// ---------- settings / backgrounds / confetti ----------
+const BGS=[
+ {id:'meadow',n:'Sunny Meadow',e:'🌼',c:0},
+ {id:'beach',n:'Sandy Beach',e:'🏖️',c:5000},
+ {id:'candy',n:'Candy Land',e:'🍭',c:75000},
+ {id:'space',n:'Outer Space',e:'🚀',c:2.5e6},
+ {id:'ocean',n:'Under the Sea',e:'🐠',c:6e7},
+ {id:'rainbow',n:'Rainbow Dreamland',e:'🦄',c:1.5e9}
+];
+function applyLook(){
+  $('clickZone').dataset.bg=S.bg;
+  $('scene').innerHTML=(SCENE[S.bg]||[]).map(e=>`<i>${e}</i>`).join('');
+  const ch=CHARS.find(c=>c.id===S.ch)||CHARS[0];
+  $('kidBtn').textContent=ch.id==='mix'?'👦':ch.e;
+  if(S.theme==='auto')delete document.documentElement.dataset.theme;
+  else document.documentElement.dataset.theme=S.theme;
+}
+function renderSet(){
+  const tr=$('themeRow');tr.innerHTML='';
+  [['auto','🌗 Auto'],['light','☀️ Light'],['dark','🌙 Dark']].forEach(([t,label])=>{
+    const b=document.createElement('button');b.textContent=label;
+    if(S.theme===t)b.className='sel';
+    b.onclick=()=>{S.theme=t;applyLook();renderSet();save()};
+    tr.appendChild(b);
+  });
+  renderChars();
+  const l=$('bgList');l.innerHTML='';
+  BGS.forEach(x=>{
+    const own=S.bgs[x.id],on=S.bg===x.id,can=own||S.kids>=x.c;
+    const el=document.createElement('div');el.className='card'+(can?'':' off');
+    el.innerHTML=`<div><h3>${x.e} ${x.n}</h3><p>${on?'Equipped':own?'Tap to equip':'Tap to buy'}</p></div><div class="cost${own?' own':''}">${own?(on?'✔ On':'Equip'):fmt(x.c)}</div>`;
+    el.onclick=()=>{
+      if(!own){
+        if(S.kids<x.c)return;
+        S.kids-=x.c;S.bgs[x.id]=1;beep(800,.1);toast('🎨 Unlocked '+x.n+'!');confetti(18);
+      }
+      S.bg=x.id;applyLook();renderSet();render();save();
+    };
+    l.appendChild(el);
+  });
+}
+$('setBtn').onclick=()=>{renderSet();$('setm').style.display='flex'};
+$('setClose').onclick=()=>{$('setm').style.display='none'};
+setInterval(()=>{if($('setm').style.display==='flex')renderSet()},1000);
+const CHARS=[
+ {id:'mix',n:'Class Mix',e:'🎲',c:0},
+ {id:'hero',n:'Superhero Kid',e:'🦸',c:2e4},
+ {id:'wizard',n:'Wizard Kid',e:'🧙',c:2e5},
+ {id:'ninja',n:'Ninja Kid',e:'🥷',c:3e6},
+ {id:'astro',n:'Astronaut Kid',e:'🧑‍🚀',c:8e7},
+ {id:'mermaid',n:'Mermaid Kid',e:'🧜',c:2e9},
+ {id:'unicorn',n:'Unicorn',e:'🦄',c:4e10},
+ {id:'dragon',n:'Dragon',e:'🐲',c:1e12}
+];
+const SCENE={
+ meadow:['🌳','🌷','🏡','🌻','🌲','🌼','🌳'],
+ beach:['🌴','🐚','⛱️','🏖️','🦀','🌴'],
+ candy:['🍭','🧁','🍩','🍬','🍦','🧁','🍭'],
+ space:['🪐','🌑','🛰️','🌠','☄️','🌑'],
+ ocean:['🪸','🐚','🦀','🌿','🪸','🐢','🌿'],
+ rainbow:['🌸','🦋','☁️','🌸','🌈','🦋','🌸']
+};
+function renderChars(){
+  const l=$('chList');l.innerHTML='';
+  CHARS.forEach(x=>{
+    const own=S.chars[x.id],on=S.ch===x.id,can=own||S.kids>=x.c;
+    const el=document.createElement('div');el.className='card'+(can?'':' off');
+    el.innerHTML=`<div><h3>${x.e} ${x.n}</h3><p>${on?'Equipped':own?'Tap to equip':'Tap to buy'}</p></div><div class="cost${own?' own':''}">${own?(on?'✔ On':'Equip'):fmt(x.c)}</div>`;
+    el.onclick=()=>{
+      if(!own){if(S.kids<x.c)return;S.kids-=x.c;S.chars[x.id]=1;beep(800,.1);toast('🎉 Unlocked '+x.n+'!');confetti(18)}
+      S.ch=x.id;applyLook();renderSet();render();save();
+    };
+    l.appendChild(el);
+  });
+}
+function confetti(n){
+  for(let i=0;i<(n||24);i++){
+    const p=document.createElement('div');p.className='conf';
+    p.textContent=['🎉','⭐','🎈','✨','🍬'][i%5];
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDelay=Math.random()*.5+'s';
+    p.style.fontSize=(1+Math.random())+'rem';
+    document.body.appendChild(p);setTimeout(()=>p.remove(),2500);
+  }
+}
 
-        function updateDisplay() {
-            kidCountEl.innerText = Math.floor(kids) === 1 ? "1 Kid" : Math.floor(kids) + " Kids";
-            kpsCountEl.innerText = "per second: " + kidsPerSecond.toFixed(1);
+// ---------- name / dev panel ----------
+function applyName(){
+  $('nameTxt').textContent='🏫 '+S.name+' Kindergarten';
+  $('dev').style.display=S.name.trim().toLowerCase()==='kingducky'?'block':'none';
+  render();save();
+}
+function askName(){$('nameIn').value=S.name;$('modal').style.display='flex';$('nameIn').focus()}
+$('nameOk').onclick=()=>{
+  const v=$('nameIn').value.trim();
+  S.name=v||'Sunshine';$('modal').style.display='none';applyName();
+};
+$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('nameOk').click()});
+$('renameBtn').onclick=askName;
 
-            Object.keys(upgrades).forEach(id => {
-                const upgrade = upgrades[id];
-                document.getElementById(`cost-${id}`).innerText = upgrade.currentCost;
-                document.getElementById(`count-${id}`).innerText = upgrade.count;
+$('devSet').onclick=()=>{
+  const v=parseFloat($('devAmt').value);
+  if(!isNaN(v)&&v>=0){S.kids=v;S.total=Math.max(S.total,v);render()}
+};
+$('devX2').onclick=()=>{const add=S.kids;S.kids*=2;S.total+=add;render()};
+$('devMult').onclick=()=>{
+  devMult=devMult===1?2:1;
+  $('devMult').textContent='2× production: '+(devMult===2?'ON':'OFF');
+  render();
+};
+$('devBuy').onclick=()=>{
+  BUILD.forEach(x=>S.b[x.id]+=100);UPG.forEach(x=>S.u[x.id]+=100);render();
+};
 
-                const card = document.getElementById(`upgrade-${id}`);
-                if (kids >= upgrade.currentCost) {
-                    card.classList.remove('disabled');
-                } else {
-                    card.classList.add('disabled');
-                }
-            });
-        }
+function sure(id,label){
+  const b=$(id),fn=b.onclick;let armed=0,t;
+  b.onclick=()=>{
+    if(!armed){armed=1;b.textContent='⚠️ Sure? Tap again';clearTimeout(t);t=setTimeout(()=>{armed=0;b.textContent=label},3000);return}
+    armed=0;clearTimeout(t);b.textContent=label;fn();
+  };
+}
+sure('devSet','Set kids');sure('devBuy','Buy everything +100');
 
-        function createFloatingText(x, y) {
-            const text = document.createElement('div');
-            text.classList.add('floating-text');
-            text.innerText = '+1';
-            text.style.left = (x - 15) + 'px';
-            text.style.top = (y - 15) + 'px';
-            
-            clickZone.appendChild(text);
+// ---------- save ----------
+function save(){try{S.last=Date.now();localStorage.setItem('kidclicker2',JSON.stringify(S))}catch(e){}}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('kidclicker2')||'null');
+    if(d){S.name=d.name||'';S.kids=d.kids||0;
+      S.dip=d.dip||0;S.total=d.total||0;S.bus=d.bus||0;S.ach=d.ach||{};S.snd=d.snd!==false;S.last=d.last||0;S.bgs=d.bgs||{meadow:1};S.bg=d.bg||'meadow';S.theme=d.theme||'auto';S.chars=d.chars||{mix:1};S.ch=d.ch||'mix';S.music=d.music!==false;
+      BUILD.forEach(x=>S.b[x.id]=(d.b&&d.b[x.id])||0);
+      UPG.forEach(x=>S.u[x.id]=(d.u&&d.u[x.id])||0);}
+  }catch(e){}
+}
+setInterval(save,2000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+window.addEventListener('pagehide',save);
+window.addEventListener('beforeunload',save);
 
-            setTimeout(() => {
-                text.remove();
-            }, 800);
-        }
-
-        setInterval(() => {
-            if (kidsPerSecond > 0) {
-                kids += (kidsPerSecond / 10);
-                updateDisplay();
-            }
-        }, 100);
-
-        updateDisplay();
-    </script>
+// ---------- start ----------
+load();buildShop();render();scheduleBus();
+$('sndBtn').textContent=S.snd?'🔊':'🔇';
+applyLook();
+musLabel();
+function sure(id,label){
+  const b=$(id),f=b.onclick;let armed=0,t;
+  b.onclick=e=>{
+    if(!armed){armed=1;b.textContent='⚠️ Sure? Tap again';clearTimeout(t);t=setTimeout(()=>{armed=0;b.textContent=label},3000);return}
+    armed=0;clearTimeout(t);b.textContent=label;f(e);toast('✅ Done');
+  };
+}
+sure('devSet','Set kids');sure('devBuy','Buy everything +100');
+function toggleDev(){$('dev').classList.toggle('min');[...$('dev').children].slice(1).forEach(e=>e.style.display=e.style.display==='none'?'':'none')}
+(function(){
+  const dev=$('dev'),h=dev.querySelector('b');
+  let sx,sy,ox,oy,moved=false,down=false;
+  h.addEventListener('pointerdown',e=>{
+    const r=dev.getBoundingClientRect();
+    down=true;moved=false;sx=e.clientX;sy=e.clientY;ox=r.left;oy=r.top;
+    h.setPointerCapture(e.pointerId);
+  });
+  h.addEventListener('pointermove',e=>{
+    if(!down)return;
+    const dx=e.clientX-sx,dy=e.clientY-sy;
+    if(!moved&&Math.hypot(dx,dy)<5)return;
+    moved=true;
+    const x=Math.max(0,Math.min(innerWidth-dev.offsetWidth,ox+dx));
+    const y=Math.max(0,Math.min(innerHeight-dev.offsetHeight,oy+dy));
+    dev.style.left=x+'px';dev.style.top=y+'px';dev.style.bottom='auto';
+  });
+  h.addEventListener('pointerup',()=>{down=false;if(!moved)toggleDev()});
+  h.addEventListener('pointercancel',()=>{down=false});
+})();
+if(innerWidth<=700)toggleDev();
+if(S.last){
+  const s=Math.min((Date.now()-S.last)/1000,28800),g=kpsNow()*s*.5;
+  if(s>60&&g>=1){S.kids+=g;S.total+=g;setTimeout(()=>toast('Welcome back! +'+fmt(g)+' kids while you were away'),500)}
+}
+if(S.name){$('modal').style.display='none';applyName()}else{askName()}
+</script>
 </body>
 </html>
