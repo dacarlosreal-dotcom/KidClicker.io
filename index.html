@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kid Clicker</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            display: flex;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+
+        .clicker-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 4px solid #fff;
+            background: rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .counter-box {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .kps-text {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .kid-btn {
+            font-size: 8rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.05s ease;
+            filter: drop-shadow(0px 10px 10px rgba(0,0,0,0.15));
+        }
+
+        .kid-btn:active {
+            transform: scale(0.9);
+        }
+
+        .shop-section {
+            width: 350px;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .shop-header {
+            background: #ff7675;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .shop-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .upgrade-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upgrade-card:hover {
+            border-color: #ff7675;
+            background: #fff5f5;
+            transform: translateY(-2px);
+        }
+
+        .upgrade-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e9ecef;
+            border-color: #dee2e6;
+            transform: none;
+        }
+
+        .upgrade-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .upgrade-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .upgrade-cost {
+            font-weight: bold;
+            color: #2ed573;
+            font-size: 1.1rem;
+        }
+
+        .upgrade-count {
+            background: #ff7675;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .floating-text {
+            position: absolute;
+            color: #ff7675;
+            font-weight: bold;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 1px 1px 2px white;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-100px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clicker-section" id="clickZone">
+        <div class="counter-box">
+            <h1 id="kidCount">0 Kids</h1>
+            <div class="kps-text" id="kpsCount">per second: 0</div>
+        </div>
+        <div class="kid-btn" id="kidButton">👦</div>
+    </div>
+
+    <div class="shop-section">
+        <h2 class="shop-header">The Nursery Shop</h2>
+        <div class="shop-items">
+            
+            <div class="upgrade-card" id="upgrade-daycare">
+                <div class="upgrade-info">
+                    <h3>Baby Daycare <span class="upgrade-count" id="count-daycare">0</span></h3>
+                    <p>Generates +0.5 Kids per second</p>
+                </div>
+                <div class="upgrade-cost" id="cost-daycare">15</div>
+            </div>
+
+            <div class="upgrade-card" id="upgrade-playground">
+                <div class="upgrade-info">
+                    <h3>Playground <span class="upgrade-count" id="count-playground">0</span></h3>
+                    <p>Generates +4 Kids per second</p>
+                </div>
+                <div class="upgrade-cost" id="cost-playground">100</div>
+            </div>
+
+            <div class="upgrade-card" id="upgrade-school">
+                <div class="upgrade-info">
+                    <h3>Elementary School <span class="upgrade-count" id="count-school">0</span></h3>
+                    <p>Generates +32 Kids per second</p>
+                </div>
+                <div class="upgrade-cost" id="cost-school">1,100</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let kids = 0;
+        let kidsPerSecond = 0;
+
+        const upgrades = {
+            daycare: { count: 0, baseCost: 15, currentCost: 15, kps: 0.5 },
+            playground: { count: 0, baseCost: 100, currentCost: 100, kps: 4 },
+            school: { count: 0, baseCost: 1100, currentCost: 1100, kps: 32 }
+        };
+
+        const kidCountEl = document.getElementById('kidCount');
+        const kpsCountEl = document.getElementById('kpsCount');
+        const kidButton = document.getElementById('kidButton');
+        const clickZone = document.getElementById('clickZone');
+
+        kidButton.addEventListener('click', (e) => {
+            kids += 1;
+            updateDisplay();
+            createFloatingText(e.clientX, e.clientY);
+        });
+
+        Object.keys(upgrades).forEach(id => {
+            document.getElementById(`upgrade-${id}`).addEventListener('click', () => {
+                buyUpgrade(id);
+            });
+        });
+
+        function buyUpgrade(id) {
+            const upgrade = upgrades[id];
+            if (kids >= upgrade.currentCost) {
+                kids -= upgrade.currentCost;
+                upgrade.count++;
+                upgrade.currentCost = Math.floor(upgrade.baseCost * Math.pow(1.15, upgrade.count));
+                calculateKPS();
+                updateDisplay();
+            }
+        }
+
+        function calculateKPS() {
+            kidsPerSecond = 0;
+            Object.keys(upgrades).forEach(id => {
+                kidsPerSecond += upgrades[id].count * upgrades[id].kps;
+            });
+        }
+
+        function updateDisplay() {
+            kidCountEl.innerText = Math.floor(kids) === 1 ? "1 Kid" : Math.floor(kids) + " Kids";
+            kpsCountEl.innerText = "per second: " + kidsPerSecond.toFixed(1);
+
+            Object.keys(upgrades).forEach(id => {
+                const upgrade = upgrades[id];
+                document.getElementById(`cost-${id}`).innerText = upgrade.currentCost;
+                document.getElementById(`count-${id}`).innerText = upgrade.count;
+
+                const card = document.getElementById(`upgrade-${id}`);
+                if (kids >= upgrade.currentCost) {
+                    card.classList.remove('disabled');
+                } else {
+                    card.classList.add('disabled');
+                }
+            });
+        }
+
+        function createFloatingText(x, y) {
+            const text = document.createElement('div');
+            text.classList.add('floating-text');
+            text.innerText = '+1';
+            text.style.left = (x - 15) + 'px';
+            text.style.top = (y - 15) + 'px';
+            
+            clickZone.appendChild(text);
+
+            setTimeout(() => {
+                text.remove();
+            }, 800);
+        }
+
+        setInterval(() => {
+            if (kidsPerSecond > 0) {
+                kids += (kidsPerSecond / 10);
+                updateDisplay();
+            }
+        }, 100);
+
+        updateDisplay();
+    </script>
+</body>
+</html>
